@@ -22,8 +22,8 @@ Registration with arifOS:
   GEOX acts as a domain coprocessor — it does NOT replace arifOS.
 
 Server: uvicorn-based ASGI application.
-Run:    python -m geox.geox_mcp_server
-        or uvicorn geox.geox_mcp_server:app --host 0.0.0.0 --port 8100
+Run:    python -m arifos.geox.geox_mcp_server
+        or uvicorn arifos.geox.geox_mcp_server:app --host 0.0.0.0 --port 8100
 """
 
 from __future__ import annotations
@@ -32,7 +32,6 @@ import asyncio
 import json
 import logging
 import time
-import uuid
 from datetime import datetime, timezone
 from typing import Any
 
@@ -488,7 +487,7 @@ if __name__ == "__main__":
     try:
         import uvicorn  # type: ignore
         uvicorn.run(
-            "geox.geox_mcp_server:app",
+            "arifos.geox.geox_mcp_server:app",
             host=args_parsed.host,
             port=args_parsed.port,
             log_level=args_parsed.log_level,

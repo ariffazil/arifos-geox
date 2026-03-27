@@ -38,166 +38,16 @@ from arifos.geox.geox_schemas import (
     GeoQuantity,
     ProvenanceRecord,
 )
+from arifos.geox.base_tool import (
+    BaseTool,
+    GeoToolResult,
+    _make_provenance,
+    _make_quantity,
+)
+from arifos.geox.tools.macrostrat_tool import MacrostratTool
+from arifos.geox.tools.lem_bridge import LEMBridgeTool
 
 
-# ---------------------------------------------------------------------------
-# GeoToolResult
-# ---------------------------------------------------------------------------
-
-@dataclass
-class GeoToolResult:
-    """
-    Standardised output from any GEOX tool execution.
-
-    Attributes:
-        quantities:  List of GeoQuantity objects extracted from raw output.
-        raw_output:  Unprocessed output dict from the underlying model/API.
-        metadata:    Tool-specific metadata (e.g. model version, region).
-        tool_name:   Registered name of the tool that produced this result.
-        latency_ms:  Wall-clock execution time in milliseconds.
-        success:     True if the tool returned valid output.
-        error:       Error message if success=False, None otherwise.
-    """
-
-    quantities: list[GeoQuantity] = field(default_factory=list)
-    raw_output: dict[str, Any] = field(default_factory=dict)
-    metadata: dict[str, Any] = field(default_factory=dict)
-    tool_name: str = ""
-    latency_ms: float = 0.0
-    success: bool = True
-    error: str | None = None
-
-    def to_audit_dict(self) -> dict[str, Any]:
-        """Serialise to audit-log compatible dict."""
-        return {
-            "tool_name": self.tool_name,
-            "success": self.success,
-            "latency_ms": self.latency_ms,
-            "quantity_count": len(self.quantities),
-            "error": self.error,
-            "metadata": self.metadata,
-        }
-
-
-# ---------------------------------------------------------------------------
-# Provenance helper (avoid circular import from utils)
-# ---------------------------------------------------------------------------
-
-def _make_provenance(
-    source_id: str,
-    source_type: str,
-    confidence: float,
-    citation: str | None = None,
-    checksum: str | None = None,
-) -> ProvenanceRecord:
-    """Create a minimal ProvenanceRecord for tool outputs."""
-    return ProvenanceRecord(
-        source_id=source_id,
-        source_type=source_type,  # type: ignore[arg-type]
-        timestamp=datetime.now(timezone.utc),
-        confidence=confidence,
-        checksum=checksum,
-        citation=citation,
-        floor_check={
-            "F1_amanah": True,
-            "F2_truth": True,
-            "F4_clarity": True,
-            "F7_humility": True,
-            "F9_anti_hantu": True,
-            "F11_authority": True,
-            "F13_sovereign": True,
-        },
-    )
-
-
-def _make_quantity(
-    value: float,
-    units: str,
-    quantity_type: str,
-    location: CoordinatePoint,
-    provenance: ProvenanceRecord,
-    uncertainty: float = 0.08,
-) -> GeoQuantity:
-    """Create a GeoQuantity with F7-compliant uncertainty."""
-    # Clamp to F7 humility band
-    uncertainty = max(0.03, min(0.15, uncertainty))
-    return GeoQuantity(
-        value=value,
-        units=units,
-        quantity_type=quantity_type,
-        coordinates=location,
-        timestamp=datetime.now(timezone.utc),
-        uncertainty=uncertainty,
-        provenance=provenance,
-    )
-
-
-# ---------------------------------------------------------------------------
-# BaseTool
-# ---------------------------------------------------------------------------
-
-class BaseTool(ABC):
-    """
-    Abstract base class for all GEOX tool adapters.
-
-    Subclasses must implement:
-        name        — unique registered name
-        description — human-readable description
-        run()       — async execution returning GeoToolResult
-
-    Optional overrides:
-        validate_inputs() — input schema check
-        health_check()    — connectivity / readiness check
-    """
-
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """Unique registered tool name."""
-        ...
-
-    @property
-    @abstractmethod
-    def description(self) -> str:
-        """Human-readable description of what this tool does."""
-        ...
-
-    @abstractmethod
-    async def run(self, inputs: dict[str, Any]) -> GeoToolResult:
-        """
-        Execute the tool with the given inputs.
-
-        Args:
-            inputs: Tool-specific input dict. Required keys documented
-                    per subclass.
-
-        Returns:
-            GeoToolResult with quantities, raw_output, and metadata.
-        """
-        ...
-
-    def validate_inputs(self, inputs: dict[str, Any]) -> bool:
-        """
-        Validate input dict keys and types before run().
-
-        Subclasses should override this to enforce required fields.
-
-        Returns:
-            True if inputs are valid, False otherwise.
-        """
-        return isinstance(inputs, dict)
-
-    def health_check(self) -> bool:
-        """
-        Quick readiness check (e.g. ping remote model endpoint).
-
-        Default implementation always returns True for mock/local tools.
-        Override for real remote tools.
-
-        Returns:
-            True if tool is ready to accept requests.
-        """
-        return True
 
 
 # ---------------------------------------------------------------------------
@@ -894,4 +744,6 @@ class ToolRegistry:
         registry.register(SeismicVLMTool())
         registry.register(SimulatorTool())
         registry.register(GeoRAGTool())
+        registry.register(MacrostratTool())
+        registry.register(LEMBridgeTool())
         return registry

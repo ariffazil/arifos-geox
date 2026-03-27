@@ -22,7 +22,7 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from typing import Any
 
-from arifos.geox.geox_schemas import GeoRequest, GeoResponse
+from arifos.geox.geox_schemas import GeoRequest, GeoResponse, CoordinatePoint
 
 
 # ---------------------------------------------------------------------------
@@ -365,3 +365,83 @@ class GeoMemoryStore:
             "Falling back to in-memory keyword search."
         )
         return await self.retrieve(query, basin=basin, limit=limit)
+
+
+class DualMemoryStore:
+    """
+    Dual-memory system combining:
+    - Discrete: Macrostrat entities (units, columns, formations)
+    - Continuous: EO embeddings from LEM
+    """
+
+    def __init__(
+        self,
+        qdrant_client: Any | None = None,
+        macrostrat_cache_dir: str = "./macrostrat_cache",
+    ) -> None:
+        self.qdrant = qdrant_client
+        self.cache_dir = macrostrat_cache_dir
+        self._discrete_cache: dict[str, Any] = {}  # Macrostrat data
+        self._continuous_cache: dict[str, Any] = {}  # Embeddings
+
+    async def query_dual(
+        self,
+        location: CoordinatePoint,
+        query_type: str = "analog_search",
+        top_k: int = 5,
+    ) -> dict[str, Any]:
+        """
+        Query both memories and return fused results.
+
+        Returns:
+            {
+                "discrete": [...],  # Macrostrat units/columns
+                "continuous": [...],  # Similar embeddings
+                "fused_ranking": [...]  # Combined evidence
+            }
+        """
+        # Query discrete memory (Macrostrat)
+        # In a real implementation, this would look up the cache or call the tool
+        discrete_results = await self._query_discrete(location, top_k)
+
+        # Query continuous memory (embeddings)
+        continuous_results = await self._query_continuous(location, top_k)
+
+        # Fuse rankings
+        fused = self._fuse_results(discrete_results, continuous_results)
+
+        return {
+            "discrete": discrete_results,
+            "continuous": continuous_results,
+            "fused_ranking": fused,
+        }
+
+    async def _query_discrete(self, location: CoordinatePoint, top_k: int) -> list[dict[str, Any]]:
+        """Mock discrete query."""
+        # This would normally interface with MacrostratTool or its results cache
+        return [{"type": "unit", "name": "Formation A", "confidence": 0.85}]
+
+    async def _query_continuous(self, location: CoordinatePoint, top_k: int) -> list[dict[str, Any]]:
+        """Mock continuous query."""
+        # This would normally interface with Qdrant
+        return [{"type": "embedding", "source": "TerraFM", "similarity": 0.92, "confidence": 0.75}]
+
+    def _fuse_results(
+        self, discrete: list[dict[str, Any]], continuous: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Merge discrete and continuous evidence into ranked hypotheses."""
+        fused = []
+        # Interleave based on confidence for now
+        d_idx, c_idx = 0, 0
+        while (d_idx < len(discrete) or c_idx < len(continuous)) and len(fused) < 10:
+            d_val = discrete[d_idx] if d_idx < len(discrete) else None
+            c_val = continuous[c_idx] if c_idx < len(continuous) else None
+
+            if d_val and (not c_val or d_val.get("confidence", 0) >= c_val.get("confidence", 0)):
+                fused.append({"origin": "discrete", "data": d_val})
+                d_idx += 1
+            elif c_val:
+                fused.append({"origin": "continuous", "data": c_val})
+                c_idx += 1
+
+        return fused
