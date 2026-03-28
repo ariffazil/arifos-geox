@@ -1,0 +1,22 @@
+{
+  "deployment_id": "vps_main_arifos",
+  "provider_key": "moonshot",
+  "family_key": "minimax",
+  "model_id": "MiniMax-M2.7",
+  "tools_live": [
+    "read", "write", "edit", "exec",
+    "docker_ps", "docker_logs", "docker_exec",
+    "web_search", "web_fetch", "browser",
+    "sessions_spawn", "sessions_list", "sessions_history",
+    "memory_search", "memory_get",
+    "arifOS_kernel", "gateway:config.get",
+    "message", "tts", "pdf", "image"
+  ],
+  "web_on": true,
+  "memory_mode": "vault_backed",
+  "execution_mode": "governed",
+  "side_effects_allowed": false,
+  "auth_level": "full_vps_exec_no_ring2",
+  "verified_at": "2026-03-28T00:00:00Z",
+  "notes": "arifOS primary production deployment. Full tool access except Ring 2."
+}

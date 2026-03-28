@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "provider_soul_profile",
+  "description": "Coarse routing shorthand — NOT ground truth. Soul = provider vibe for routing only.",
+  "type": "object",
+  "required": ["provider_key", "family_key", "soul_label"],
+  "properties": {
+    "provider_key": {
+      "type": "string",
+      "description": "Provider org key (e.g., openai, anthropic, moonshot)"
+    },
+    "family_key": {
+      "type": "string",
+      "description": "Model family key (e.g., gpt, claude, minimax)"
+    },
+    "soul_label": {
+      "type": "string",
+      "description": "Human-readable archetype (e.g., structured_clerk_engineer)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Plain-language description of the soul"
+    },
+    "communication_style": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tone/style hints for routing"
+    },
+    "reasoning_style": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Thinking-style hints for routing"
+    },
+    "default_role_fit": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Best-fit arifOS roles"
+    },
+    "avoid_role": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

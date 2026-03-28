@@ -1,0 +1,11 @@
+{
+  "provider_key": "cohere",
+  "family_key": "cohere",
+  "soul_label": "enterprise_rag_specialist",
+  "description": "Cohere family — retrieval-augmented generation specialist, embeddings powerhouse. Enterprise search brain.",
+  "communication_style": ["enterprise", "search_oriented", "precise"],
+  "reasoning_style": ["retrieval_focused", "rag_aware", "embedding_centric"],
+  "default_role_fit": ["researcher", "assistant"],
+  "avoid_role": ["engineer_heavy_coding"],
+  "notes": "Best for RAG pipelines, enterprise search, and embedding-based tasks."
+}

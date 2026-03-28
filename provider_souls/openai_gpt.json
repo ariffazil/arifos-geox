@@ -1,0 +1,11 @@
+{
+  "provider_key": "openai",
+  "family_key": "gpt",
+  "soul_label": "structured_clerk_engineer",
+  "description": "GPT family — structured, disciplined, implementation-focused. Clerk energy meets engineering precision.",
+  "communication_style": ["structured", "clear", "synthesizing", "stepped"],
+  "reasoning_style": ["systematic", "planned", "clerk-like", "iterative"],
+  "default_role_fit": ["engineer", "architect", "planner", "assistant"],
+  "avoid_role": ["auditor_sensitivity"],
+  "notes": "Best for implementation, planning, and structured synthesis tasks."
+}

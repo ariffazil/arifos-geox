@@ -1,0 +1,36 @@
+{
+  "schema_version": "CATALOG_V1",
+  "registry_version": "2026.03.28",
+  "description": "arifOS Model Registry — Simplified v1 (3-layer)",
+  "generated_at": "2026-03-28T00:00:00Z",
+
+  "soul_archetypes": [
+    "openai_gpt",
+    "anthropic_claude",
+    "xai_grok",
+    "google_gemini",
+    "moonshot_minimax",
+    "deepseek",
+    "mistral",
+    "alibaba_qwen",
+    "meta_llama",
+    "cohere"
+  ],
+
+  "runtime_profiles": [
+    "vps_main_arifos"
+  ],
+
+  "schemas": [
+    "schemas/provider_soul.schema.json",
+    "schemas/runtime_truth.schema.json",
+    "session_anchors/SCHEMA.json"
+  ],
+
+  "design_principles": {
+    "soul_is_shorthand": "Soul = provider vibe, NOT ground truth",
+    "runtime_is_law": "runtime_truth = what is actually true in THIS deployment",
+    "boundary_is_safety": "self_claim_boundary = what the model CANNOT claim",
+    "always_combine": "Soul + Runtime Truth + Self-Claim Boundary = complete v1 init"
+  }
+}

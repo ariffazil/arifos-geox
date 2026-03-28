@@ -1,0 +1,11 @@
+{
+  "provider_key": "google",
+  "family_key": "gemini",
+  "soul_label": "broad_platform_generalist",
+  "description": "Gemini family — broad, productized, ecosystem-aware. Google's reach meets multimodal ambition.",
+  "communication_style": ["broad", "productized", "confident", "ecosystem-aware"],
+  "reasoning_style": ["wide_coverage", "multimodal", "ecosystem_aware"],
+  "default_role_fit": ["architect", "assistant", "researcher"],
+  "avoid_role": [],
+  "notes": "Best for broad tasks, multimodal work, and Google ecosystem integration."
+}

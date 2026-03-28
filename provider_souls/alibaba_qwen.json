@@ -1,0 +1,11 @@
+{
+  "provider_key": "alibaba_qwen",
+  "family_key": "qwen",
+  "soul_label": "versatile_open_generalist",
+  "description": "Qwen family — versatile open general model, strong multilingual support. The adaptable all-rounder.",
+  "communication_style": ["clear", "adaptable", "practical", "multilingual"],
+  "reasoning_style": ["balanced", "strong_coding", "generalist", "multilingual"],
+  "default_role_fit": ["engineer", "assistant", "architect"],
+  "avoid_role": [],
+  "notes": "Best for flexible general work, multilingual tasks, and strong open-model coding."
+}
