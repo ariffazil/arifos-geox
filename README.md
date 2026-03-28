@@ -5,37 +5,41 @@
 
 ---
 
-## The 3-Layer Design
+## The 4-Layer Source of Truth
 
 ```
+
 ┌─────────────────────────────────────────────────────┐
-│  Layer 1: provider_soul_profiles                  │
-│  Soul archetype (routing shorthand, NOT truth)     │
-│  provider_key + soul_label + communication_style  │
+│  Layer 1: catalog.json (The Index)                  │
+│  Master list of all supported providers and families │
 ├─────────────────────────────────────────────────────┤
-│  Layer 2: runtime_truth_profiles                  │
-│  Live deployment facts (THIS IS ground truth)       │
-│  deployment_id + tools_live + web_on + memory      │
+│  Layer 2: provider_souls/ (The Flavor)              │
+│  Lab-shaped behavioral archetypes (vibe/style)       │
 ├─────────────────────────────────────────────────────┤
-│  Layer 3: session_anchors                          │
-│  What was bound during init                        │
-│  soul + runtime + role + self_claim_boundary       │
+│  Layer 3: model_specs/ (The Mapping)                │
+│  Formal model IDs bound to specific souls           │
+├─────────────────────────────────────────────────────┤
+│  Layer 4: runtime_profiles/ (The Law)               │
+│  Live deployment facts (tools, web, memory status)  │
 └─────────────────────────────────────────────────────┘
 ```
+
+**Resulting Session Anchor:**
+- `Flavor` (Soul) + `Law` (Runtime) + `Mission` (Role) = **Hardened Identity.**
 
 ---
 
 ## Why This Works
 
 | Layer | Purpose | NOT |
-|-------|---------|-----|
+| :--- | :--- | :--- |
 | Soul | Routing shorthand, operator intuition | NOT identity verification |
 | Runtime Truth | What deployment can actually do | NOT brand perception |
 | Session Anchor | What was bound at init | NOT permanent record |
 
 ---
 
-## Provider Soul Archetypes (10)
+## Provider Soul Archetypes (15)
 
 | Provider | Soul Label | Vibe |
 |----------|-----------|------|
@@ -43,12 +47,22 @@
 | Anthropic Claude | `careful_makcik_reviewer` | Careful, explanatory |
 | xAI Grok | `blunt_trickster_commentator` | Direct, irreverent |
 | Google Gemini | `broad_platform_generalist` | Wide, ecosystem |
-| MiniMax | `agentic_iterative_operator` | Terse, execution-focused |
+| **Moonshot AI (Kimi)** | `context_hungry_reader` | 超长上下文, patient reader |
+| **MiniMax** | `agentic_iterative_operator` | Terse, execution-focused |
 | DeepSeek | `focused_engineering_specialist` | Technical, coding-strong |
 | Mistral | `adaptable_open_craftsman` | Compact, efficient |
-| Qwen | `versatile_open_generalist` | Clear, generalist |
+| Alibaba Qwen | `versatile_open_generalist` | Clear, generalist |
 | Meta Llama | `stoic_open_workhorse` | Reliable, steady |
 | Cohere | `enterprise_rag_specialist` | Retrieval, RAG |
+| **GitHub Copilot** | `inline_code_completer` | Predictive, IDE-integrated |
+| **Perplexity** | `search_grounded_synthesizer` | Citation-obsessed, sourced |
+| **Baidu Ernie** | `chinese_knowledge_oracle` | 百度文心, China-focused |
+| **01.AI Yi** | `open_challenger` | 零一万物, startup energy |
+| **Honeypot** | `wrong_provider_mismatch` | **Security:** Catch identity bluffing |
+
+**Notes:**
+- Moonshot AI (月之暗面) makes **Kimi** — NOT MiniMax. Different companies! 🇨🇳
+- Copilot/Perplexity are **products** with distinct souls, even if they use base models underneath
 
 **Soul labels are routing shorthand, NOT scientific truth.**
 
@@ -59,7 +73,7 @@
 ```json
 {
   "deployment_id": "vps_main_arifos",
-  "provider_key": "moonshot",
+  "provider_key": "minimax",
   "family_key": "minimax",
   "model_id": "MiniMax-M2.7",
   "tools_live": ["read","write","exec","docker_*","sessions_*","memory_*","arifOS_kernel"...],
@@ -98,7 +112,7 @@ Every session MUST bind:
 
 ```
 arifOS-model-registry/
-├── provider_souls/           # 10 soul archetypes
+├── provider_souls/           # 15 soul archetypes
 │   ├── openai_gpt.json
 │   ├── anthropic_claude.json
 │   └── ...
