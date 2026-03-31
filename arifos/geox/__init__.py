@@ -15,40 +15,38 @@ Theory of Anomalous Contrast (ToAC) — The Core Principle:
         4. REQUIRING human review when risk is high
 
 Architecture: THEORY → ENGINE → TOOLS → GOVERNANCE
-
-    THEORY: ContrastTaxonomy, DataSource, VisualTransform, ProxyStrategy
-    ENGINE: ContrastSpace, TransformRegistry, AnomalyDetector
-    TOOLS: SeismicSingleLineTool, ContrastGovernedTool, VisualizationAuditor
-    GOVERNANCE: FloorEnforcer, AuditLogger, VerdictRenderer
-
-Bond et al. (2007) Anti-Bias:
-
-    79% of expert geoscientists failed on simple synthetic seismic
-    because conceptual bias dominated over data. GEOX fixes this by:
-        - NEVER showing raw seismic to LLM first
-        - Computing physical attributes BEFORE interpretation
-        - Running explicit bias audit with historical failure rates
-        - Documenting 3+ alternative interpretations
 """
 
 __version__ = "0.4.0"
 __author__ = "arifOS"
 
+# Import layers directly (avoiding circular imports)
 # THEORY Layer — Core principles
 from .THEORY import (
     # Taxonomy
-    ContrastTaxonomy,
-    DataSource,
+    SourceDomain,
     VisualTransform,
-    ProxyStrategy,
-    # Verdicts
+    PhysicalProxy,
+    ConfidenceClass,
+    ContrastTaxonomy,
+    TRANSFORM_CATALOG,
+    # Governance
     ContrastVerdict,
-    GeoxVerdict,
-    # Factory
-    create_seismic_taxonomy,
-    # Functions
+    HOLDTrigger,
+    GovernancePolicy,
     assess_conflation_risk,
+    POLICY_SEISMIC,
+    POLICY_MEDICAL,
+    POLICY_GENERIC,
     check_floor_compliance,
+    # Theory
+    ConflationRisk,
+    ContrastDomain,
+    ContrastCanon,
+    ContrastStack,
+    SignalAudit,
+    AnomalousContrastTheory,
+    ToACCore,
     # Constants
     GEOX_SEAL,
     GEOX_SABAR,
@@ -64,35 +62,14 @@ from .ENGINE import (
     ContrastSpace,
     ContrastFeature,
     TransformRegistry,
+    TransformProfile,
     get_registry,
     AnomalyDetector,
     ConflationAlert,
 )
 
-# TOOLS Layer — Generic tools
-from .TOOLS.generic import (
-    ContrastGovernedTool,
-    ToolResult,
-    AttributePipeline,
-    PipelineStage,
-    VisualizationAuditor,
-    VisualizationAuditResult,
-)
-
-# TOOLS Layer — Seismic tools
-from .TOOLS.seismic import (
-    SeismicSingleLineTool,
-    SeismicAttributeCalculator,
-    SeismicInterpretationProtocol,
-    AttributeResult,
-    InterpretationStep,
-    InterpretationCheckpoint,
-    compute_semblance,
-    compute_dip_steered_coherence,
-)
-
 # GOVERNANCE Layer — Compliance
-from .GOVERNANCE import (
+from .governance import (
     FloorEnforcer,
     FloorCheckResult,
     AuditLogger,
@@ -106,17 +83,28 @@ from .GOVERNANCE import (
 __all__ = [
     # Version
     "__version__",
-    
     # THEORY
-    "ContrastTaxonomy",
-    "DataSource",
+    "SourceDomain",
     "VisualTransform",
-    "ProxyStrategy",
+    "PhysicalProxy",
+    "ConfidenceClass",
+    "ContrastTaxonomy",
+    "TRANSFORM_CATALOG",
     "ContrastVerdict",
-    "GeoxVerdict",
-    "create_seismic_taxonomy",
+    "HOLDTrigger",
+    "GovernancePolicy",
     "assess_conflation_risk",
+    "POLICY_SEISMIC",
+    "POLICY_MEDICAL",
+    "POLICY_GENERIC",
     "check_floor_compliance",
+    "ConflationRisk",
+    "ContrastDomain",
+    "ContrastCanon",
+    "ContrastStack",
+    "SignalAudit",
+    "AnomalousContrastTheory",
+    "ToACCore",
     "GEOX_SEAL",
     "GEOX_SABAR",
     "GEOX_PARTIAL",
@@ -124,33 +112,14 @@ __all__ = [
     "GEOX_HOLD",
     "GEOX_BLOCK",
     "GEOX_VOID",
-    
     # ENGINE
     "ContrastSpace",
     "ContrastFeature",
     "TransformRegistry",
+    "TransformProfile",
     "get_registry",
     "AnomalyDetector",
     "ConflationAlert",
-    
-    # TOOLS (Generic)
-    "ContrastGovernedTool",
-    "ToolResult",
-    "AttributePipeline",
-    "PipelineStage",
-    "VisualizationAuditor",
-    "VisualizationAuditResult",
-    
-    # TOOLS (Seismic)
-    "SeismicSingleLineTool",
-    "SeismicAttributeCalculator",
-    "SeismicInterpretationProtocol",
-    "AttributeResult",
-    "InterpretationStep",
-    "InterpretationCheckpoint",
-    "compute_semblance",
-    "compute_dip_steered_coherence",
-    
     # GOVERNANCE
     "FloorEnforcer",
     "FloorCheckResult",
@@ -172,3 +141,12 @@ def get_geox_info() -> dict:
         "domains": ["seismic", "generic (extensible)"],
         "constitutional_floors": ["F1", "F4", "F7", "F9", "F13"],
     }
+
+
+# Lazy imports for TOOLS layer
+# These require separate import to avoid circular dependencies
+def get_tools():
+    """Get the TOOLS layer. Use this for accessing seismic/generic tools."""
+    from . import TOOLS
+
+    return TOOLS

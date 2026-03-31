@@ -17,7 +17,7 @@ from dataclasses import dataclass, field
 from typing import Any
 import numpy as np
 
-from ...THEORY import ContrastTaxonomy, DataSource, assess_conflation_risk, GEOX_HOLD
+from ...THEORY import ContrastTaxonomy, assess_conflation_risk, GEOX_HOLD
 from ...ENGINE import ContrastSpace, ContrastFeature, get_registry
 
 

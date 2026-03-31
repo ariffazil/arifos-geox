@@ -21,10 +21,10 @@ import uuid
 
 from ...THEORY import (
     ContrastTaxonomy,
-    DataSource,
+    SourceDomain,
     VisualTransform,
-    ProxyStrategy,
-    check_floor_compliance,
+    PhysicalProxy,
+    ConfidenceClass,
     assess_conflation_risk,
     GEOX_BLOCK,
     GEOX_HOLD,
@@ -145,14 +145,10 @@ class ContrastGovernedTool(ABC):
             # Step 3: Update taxonomy with transforms
             taxonomy = self._update_taxonomy_with_transforms(taxonomy, transform_chain)
             
-            # Step 4: Check floor compliance
-            floor_violations = check_floor_compliance(output)
+            # Step 4: Check compliance
+            floor_violations = self._check_compliance(output, taxonomy)
             
-            # Step 5: Check additional compliance
-            additional_violations = self._check_compliance(output, taxonomy)
-            floor_violations.extend(additional_violations)
-            
-            # Step 6: Generate verdict
+            # Step 5: Generate verdict
             verdict, reason = self._generate_verdict(
                 taxonomy, transform_chain, floor_violations
             )
@@ -189,16 +185,21 @@ class ContrastGovernedTool(ABC):
         """
         # Default: create generic taxonomy
         return ContrastTaxonomy(
-            data_source=DataSource(
-                source_type="unknown",
-                traceability="none",
+            source=SourceDomain.UNKNOWN,
+            source_details={"type": "unknown"},
+            transforms=[],
+            proxy=PhysicalProxy(
+                visual_feature="unknown",
+                claimed_physical_quantity="unknown",
+                proxy_validity="unverified",
+                reliability=0.1,
             ),
-            visual_transforms=[],
-            proxy_strategy=ProxyStrategy(
-                proxy_type="none",
-                confidence=0.1,
+            confidence=ConfidenceClass(
+                value=0.05,
+                confidence_type="detection",
+                justification="Default confidence for unknown source",
             ),
-            metadata={"domain": self.domain},
+            domain=self.domain,
         )
     
     def _update_taxonomy_with_transforms(
@@ -207,7 +208,6 @@ class ContrastGovernedTool(ABC):
         transform_chain: list[str],
     ) -> ContrastTaxonomy:
         """Update taxonomy with the transform chain that was applied."""
-        from ...THEORY import VisualTransform
         from ...ENGINE import get_registry
         
         registry = get_registry()
@@ -216,23 +216,30 @@ class ContrastGovernedTool(ABC):
         for transform_name in transform_chain:
             profile = registry.get(transform_name)
             if profile:
+                # Map TransformProfile to VisualTransform
                 visual_transforms.append(VisualTransform(
-                    transform_name=profile.transform_name,
-                    transform_type=profile.transform_type,
-                    amplification_factor=profile.amplification_factor,
-                    distortion_potential=profile.distortion_potential,
+                    name=profile.transform_name,
+                    category=profile.transform_type,
+                    artifact_risk="low" if profile.risk_level == "LOW" else 
+                                  "medium" if profile.risk_level == "MEDIUM" else "high",
                 ))
             else:
                 # Unknown transform - high risk
                 visual_transforms.append(VisualTransform(
-                    transform_name=transform_name,
-                    transform_type="unknown",
-                    amplification_factor=2.0,  # Assume moderate amplification
-                    distortion_potential=0.5,  # Assume significant distortion
+                    name=transform_name,
+                    category="unknown",
+                    artifact_risk="high",
                 ))
         
-        taxonomy.visual_transforms = visual_transforms
-        return taxonomy
+        # Return new taxonomy with updated transforms
+        return ContrastTaxonomy(
+            source=taxonomy.source,
+            source_details=taxonomy.source_details,
+            transforms=visual_transforms,
+            proxy=taxonomy.proxy,
+            confidence=taxonomy.confidence,
+            domain=taxonomy.domain,
+        )
     
     def _check_compliance(
         self,

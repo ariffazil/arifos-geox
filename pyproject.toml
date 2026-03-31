@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "arifos-geox"
-version = "0.2.0"
+version = "0.4.2"
 description = "GEOX — Geospatial world-model co-agent for arifOS W@W federated architecture. DITEMPA BUKAN DIBERI."
 readme = "README.md"
 license = {text = "AGPL-3.0"}
@@ -52,6 +52,7 @@ dependencies = [
     "httpx>=0.24",
     "pyyaml>=6.0",
     "python-dateutil>=2.8",
+    "fastmcp>=0.12.0",
 ]
 
 [project.optional-dependencies]

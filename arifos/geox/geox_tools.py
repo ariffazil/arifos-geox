@@ -46,7 +46,10 @@ from arifos.geox.geox_schemas import (
 from arifos.geox.tools.lem_bridge import LEMBridgeTool
 from arifos.geox.tools.macrostrat_tool import MacrostratTool
 from arifos.geox.tools.seismic_visual_filter import SeismicVisualFilterTool
-from arifos.geox.tools.single_line_interpreter import SingleLineInterpreter
+from arifos.geox.tools.seismic import SeismicSingleLineTool
+
+# Alias for backward compatibility
+SingleLineInterpreter = SeismicSingleLineTool
 
 # ---------------------------------------------------------------------------
 # EarthModelTool
@@ -1071,22 +1074,24 @@ class ToolRegistry:
     def __init__(self) -> None:
         self._tools: dict[str, BaseTool] = {}
 
-    def register(self, tool: BaseTool) -> None:
+    def register(self, tool: BaseTool, name: str | None = None) -> None:
         """
         Register a tool instance.
 
         Args:
             tool: Any BaseTool subclass instance.
+            name: Optional override name for the tool.
 
         Raises:
             ValueError: If a tool with the same name is already registered.
         """
-        if tool.name in self._tools:
+        tool_name = name or tool.name
+        if tool_name in self._tools:
             raise ValueError(
-                f"Tool '{tool.name}' is already registered. "
+                f"Tool '{tool_name}' is already registered. "
                 f"Unregister it first or use a different name."
             )
-        self._tools[tool.name] = tool
+        self._tools[tool_name] = tool
 
     def get(self, name: str) -> BaseTool:
         """
@@ -1132,5 +1137,5 @@ class ToolRegistry:
         registry.register(LEMBridgeTool())
         registry.register(SeismicVisualFilterTool())
         registry.register(SeismicAttributesTool())
-        registry.register(SingleLineInterpreter())
+        registry.register(SingleLineInterpreter(), name="SingleLineInterpreter")
         return registry

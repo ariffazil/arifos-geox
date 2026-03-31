@@ -18,10 +18,10 @@ import functools
 from collections.abc import Callable
 from typing import Any, TypeVar
 
-from arifos.geox.schemas.continuity import ContinuityRecord, HardenedToolOutput
-from arifos.geox.geox_schemas import (
+from .geox_schemas import (
     ContrastMetadata,
     GeoxGovernance,
+    GeoxMcpEnvelope,
     GeoxUncertainty,
 )
 
@@ -34,32 +34,29 @@ def contrast_governed_tool(
     is_meta_attribute: bool = False,
 ) -> Callable:
     """
-    Decorator factory for seismic attribute functions (v0.4.0 Hardened).
+    Decorator factory for seismic attribute functions.
 
     Automatically attaches ContrastMetadata and enforces
-    constitutional floors on all attribute outputs via HardenedToolOutput.
-    Injects a ContinuityRecord for the arifOS Earth Witness identity.
+    constitutional floors on all attribute outputs.
+    Handles both dict and Pydantic model outputs.
     """
 
     def decorator(func: Callable) -> Callable:
+        # If physical_axes is None, we might be calling it as @contrast_governed_tool
+        # without parentheses, or just with defaults.
         axes = physical_axes or ["perceptual_lineaments"]
 
         @functools.wraps(func)
-        async def wrapper(*args: Any, **kwargs: Any) -> HardenedToolOutput:
-            # 1. Capture tool context for continuity
-            tool_name = func.__name__
-            previous_output_id = kwargs.get("previous_output_id")
-            chain_id = kwargs.get("chain_id")
-
+        async def wrapper(*args: Any, **kwargs: Any) -> GeoxMcpEnvelope:
             result = await func(*args, **kwargs)
 
             # If already wrapped, don't double wrap
-            if isinstance(result, HardenedToolOutput):
+            if isinstance(result, GeoxMcpEnvelope):
                 return result
 
-            attr_name = kwargs.get("attribute_name", tool_name)
+            attr_name = kwargs.get("attribute_name", func.__name__)
 
-            # 2. Build Contrast Metadata
+            # 1. Build Contrast Metadata
             contrast_dict = ContrastMetadata(
                 attribute_name=attr_name,
                 physical_axes=axes,
@@ -77,10 +74,10 @@ def contrast_governed_tool(
                 uncertainty_factors=_generate_uncertainty_factors(attr_name),
             )
 
-            # 3. Build Governance floors
-            floors = ["F1_amanah", "F4_clarity", "F7_humility"]
+            # 2. Build Governance Block
+            floors = ["F1", "F4", "F7"]
             if is_meta_attribute:
-                floors.append("F9_anti_hantu")
+                floors.append("F9")
 
             warnings = []
             if is_meta_attribute and not kwargs.get("well_ties"):
@@ -89,27 +86,27 @@ def contrast_governed_tool(
                     "Perceptual contrast may dominate physical signal."
                 )
 
-            # 4. Build Continuity Record (v0.4.0)
-            cont = ContinuityRecord(
-                previous_tool=kwargs.get("parent_tool"),
-                previous_output_id=previous_output_id,
-                floors_enforced=floors,
+            gov = GeoxGovernance(
+                floors_ok=floors,
+                warnings=warnings
             )
-            if chain_id:
-                cont.chain_id = chain_id
 
-            # 5. Build Hardened Output
-            return HardenedToolOutput(
-                result=result,
-                continuity=cont,
-                contrast_metadata=contrast_dict.model_dump(),
-                verdict="SEAL" if not warnings else "QUALIFY",
-                telemetry={
-                    "seal": "DITEMPA BUKAN DIBERI",
-                    "organ": "GEOX",
-                    "role": "Earth Witness",
-                    "tool": tool_name,
-                },
+            # 3. Build Uncertainty Block
+            unc = GeoxUncertainty(
+                level=0.12 if is_meta_attribute else 0.05,
+                type="image_only_structural_interpretation" if "line" in attr_name else "perceptual_lineament",
+                notes=_generate_uncertainty_factors(attr_name)
+            )
+
+            # 4. Construct Final Envelope
+            return GeoxMcpEnvelope(
+                ok=True,
+                verdict="PASS" if not warnings else "PARTIAL",
+                source_domain="geox-earth-witness",
+                uncertainty=unc,
+                contrast_metadata=contrast_dict,
+                governance=gov,
+                result=result
             )
 
         return wrapper
