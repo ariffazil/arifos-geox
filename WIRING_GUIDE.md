@@ -346,7 +346,63 @@ kubectl get pods -l app=geox
 
 ---
 
-## 10. Quick Reference
+## 10. Tool Namespace Reference
+
+### MCP Tool Registry (server.py — FastMCP)
+
+These tools are exposed via the MCP protocol and visible to AI agents:
+
+| Tool | Source File | Purpose |
+|------|------------|---------|
+| `geox_health` | `geox_mcp_server.py` | Server health check |
+| `geox_evaluate_prospect` | `geox_mcp_server.py` | Full prospect evaluation pipeline |
+| `geox_query_memory` | `geox_mcp_server.py` | Geological memory retrieval |
+| `geox_ingest_seismic_image` | `server.py` | Seismic image ingest and validation |
+| `geox_qc_seismic_image` | `server.py` | Quality control for artifacts |
+| `geox_extract_texture_attributes` | `server.py` | Texture proxies (structure tensor, LBP, GLCM) |
+| `geox_detect_reflectors` | `server.py` | Horizon candidate detection |
+| `geox_detect_fault_candidates` | `server.py` | Fault discontinuity detection |
+| `geox_segment_facies` | `server.py` | Deep learning facies segmentation |
+| `geox_reason_seismic_scene` | `server.py` | Governed interpretation synthesis |
+| `geox_audit_seismic_interpretation` | `server.py` | 888 AUDIT layer |
+
+### Volume App Tools (apps/volume_app/tools.py)
+
+Model-visible tools for 3D visualization:
+
+| Tool | Purpose |
+|------|---------|
+| `geox_open_volume_context` | Open 3D volume context view |
+| `geox_volume_render_snapshot` | Render static PNG snapshot |
+| `geox_volume_launch_interactive` | Launch interactive viserplot session |
+| `geox_volume_add_horizon` | Add horizon overlay |
+| `geox_volume_add_wells` | Add well trajectories |
+
+### Backend-Only Tools (hidden from model)
+
+These are implementation details, not exposed to AI agents:
+
+| Tool | Purpose |
+|------|---------|
+| `_geox_renderer_cigvis_build_nodes` | Build cigvis nodes |
+| `_geox_renderer_cigvis_render_png` | Render PNG via cigvis |
+| `_geox_renderer_cigvis_launch_server` | Launch viserplot server |
+
+### Tool Namespace Alignment
+
+| README Toolset | Actual MCP Tool | Status |
+|----------------|----------------|--------|
+| `geox_load_seismic_line` | — | Legacy, see `geox_ingest_seismic_image` |
+| `geox_build_structural_candidates` | — | Legacy, see `geox_detect_reflectors` |
+| `geox_feasibility_check` | — | Legacy, see `geox_evaluate_prospect` |
+| `geox_verify_geospatial` | `geox_ingest_seismic_image` | Renamed |
+| `geox_evaluate_prospect` | `geox_evaluate_prospect` | ✅ Aligned |
+
+> **Note**: README toolset table reflects v0.4.2 vision. Some legacy names remain until full migration. Use the MCP registry above as source of truth for current tool names.
+
+---
+
+## 11. Quick Reference
 
 | Action | Command |
 |--------|---------|

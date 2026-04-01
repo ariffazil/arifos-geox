@@ -10,9 +10,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **README v0.4.2**: Upgraded README to source-of-truth with tri-audience orientation (human / geologist / AI agent), plain-language ToAC explanation, Bond et al. 2007 citation, tool namespace table
 - **Constitutional Firewall**: Added `geox_feasibility_check` and `geox_verify_geospatial` tools for physical grounding of @RIF's inverse modeling.
 - **Epistemic Mapping**: Incorporated the 'Forward vs Inverse Modeling' ontology into the core system documentation.
 - **Multimodal Grounding**: Enhanced `geox_load_seismic_line` to prepare constraints for orchestrated @RIF reasoning.
+- **Renderer Architecture**: Added `renderers/` module with pluggable adapter pattern — `RendererAdapter`, neutral primitives, `SceneCompiler`, `CigvisAdapter`, `RenderExporter`
+- **Volume Context**: Added `volume_context/` module with `VolumeSceneBuilder`, `CrossSectionBuilder`, schemas
+- **Volume App**: Added `apps/volume_app/` with `VolumeApp` and MCP tools for 3D geophysical visualization
+- **Canonical State Schemas**: Added `canonical_state.py` with `GeoXIntent`, `GeoXDisplayState`, `GeoXCrossSectionState`, `GeoXSeismicSectionState`, `GeoXTriAppState`, `CrossSectionHoldTriggers`
+- **Success Criteria**: Added `GEOX_SUCCESS_CRITERIA.md` with M1-M6 milestones, six-axis framework, benchmark pack requirements
+- **Smithery Config**: Added `smithery.yaml` for MCP registry with all 10 tools documented
+- **Tri-App Architecture**: Added Map + Cross Section + Seismic Section apps with 888 HOLD triggers
+
+### Changed
+
+- **pyproject.toml**: Added `cigvis`, `cigvis-viser`, `cigvis-all` optional dependencies
+
+### Fixed
+
+- `RenderColor` default_factory — wrapped in lambda to avoid callable error
+- `uncertaintyZonePrimitive` typo → `UncertaintyZonePrimitive` in exports
+- `volume_app` import paths corrected under `apps/` namespace
+- Lint cleanup across code and docs
 
 ### Fixed
 
