@@ -1,0 +1,96 @@
+[project]
+name = "geox"
+version = "0.1.0"
+description = "GEOX — Governed geoscience coprocessor under arifOS constitutional floors. Dimension-native earth intelligence with physics-9 verification, 888_HOLD veto, and VAULT999 sealing."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "AGPL-3.0-only"
+keywords = [
+    "geoscience",
+    "petrophysics",
+    "seismic-interpretation",
+    "geological-modeling",
+    "prospect-evaluation",
+    "constitutional-ai",
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "arifos",
+    "governance",
+    "vault999",
+]
+authors = [{ name = "Muhammad Arif bin Fazil", email = "arifbfazil@gmail.com" }]
+maintainers = [
+    { name = "Muhammad Arif bin Fazil", email = "arifbfazil@gmail.com" },
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Geology",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+dependencies = [
+    "fastmcp>=0.1.0",
+    "pydantic>=2.0.0",
+    "uvicorn[standard]>=0.23.0",
+    "python-dotenv>=1.0.0",
+    "numpy>=1.20.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+all = [
+    "numpy>=1.20.0",
+    "scipy>=1.11.0",
+]
+
+[project.urls]
+Homepage      = "https://geox.arif-fazil.com"
+Documentation = "https://github.com/ariffazil/GEOX"
+Repository    = "https://github.com/ariffazil/GEOX"
+Issues        = "https://github.com/ariffazil/GEOX/issues"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["geox*"]
+exclude = ["tests*", "*.tests*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = ["tests/**", ".archive/**"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "N", "B"]
+ignore = []
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
