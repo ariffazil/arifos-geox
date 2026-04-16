@@ -12,15 +12,21 @@ DITEMPA BUKAN DIBERI — Forged, Not Given
 import os
 import sys
 
-# In Docker: /app/geox_mcp_server.py, geox package is at /app/geox/
-# So SCRIPT_DIR=/app is the parent directory containing geox/
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Set PYTHONPATH so 'geox' package is found
-os.environ["PYTHONPATH"] = SCRIPT_DIR
+# In Docker: /app/geox_mcp_server.py, geox at /app/geox/, so use SCRIPT_DIR
+# Locally: /root/geox/geox_mcp_server.py, geox at /root/geox/geox/, so use parent
+if os.path.basename(SCRIPT_DIR) == "geox" and os.path.exists(
+    os.path.join(SCRIPT_DIR, "geox_mcp_server.py")
+):
+    # Local dev: geox_mcp_server.py is INSIDE geox/ directory
+    PYTHONPATH = os.path.dirname(SCRIPT_DIR)
+else:
+    # Docker: geox_mcp_server.py is at same level as geox/ directory
+    PYTHONPATH = SCRIPT_DIR
 
-# Now we can import the geox module
-sys.path.insert(0, SCRIPT_DIR)
+os.environ["PYTHONPATH"] = PYTHONPATH
+sys.path.insert(0, PYTHONPATH)
 
 from geox.mcp.fastmcp_server import mcp
 
