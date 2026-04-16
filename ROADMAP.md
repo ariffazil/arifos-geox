@@ -1,9 +1,11 @@
 # GEOX Governed Agentic Apps — Roadmap
 
-> **Status:** Wave 1 Trust Foundation  
-> **Motto:** *Ditempa Bukan Diberi* — Forged, Not Given  
-> **Constitutional Kernel:** arifOS F1–F13  
+> **Status:** Wave 1 Trust Foundation — MCP Deployment ACTIVE
+> **Motto:** *Ditempa Bukan Diberi* — Forged, Not Given
+> **Constitutional Kernel:** arifOS F1–F13
 > **Ledger:** VAULT999
+> **MCP Server:** FastMCP v3.2.4 · HTTP transport on :8000 · SSE
+> **Last Updated:** 2026-04-16
 
 ---
 
@@ -24,7 +26,7 @@ This roadmap translates the Gemini strategic design spec into an implementable, 
 ## 2. What Was Delivered in This Commit
 
 ### 2.1 AC_Risk Governance Hardening (Option A)
-**Files:** `geox/core/ac_risk.py`, `geox/mcp/server.py`, `geox/core/tool_registry.py`
+**Files:** `geox/core/ac_risk.py`, `geox/mcp/server.py`, `geox/mcp/fastmcp_server.py`, `geox/core/tool_registry.py`
 
 - **ClaimTag enum** added (`CLAIM`, `PLAUSIBLE`, `HYPOTHESIS`, `UNKNOWN`).
 - **TEARFRAME dataclass** added (`truth`, `echo`, `amanah`, `rasa`).
@@ -35,8 +37,14 @@ This roadmap translates the Gemini strategic design spec into an implementable, 
   - `amanah_locked=False` forces `HOLD` for `SEAL`/`QUALIFY`.
 - **VAULT999 payload** embedded in every governed result.
 - **MCP tool exposure:**
-  - `compute_ac_risk` — backward-compatible basic tool.
-  - `evaluate_ac_risk_governed` — canonical governance entrypoint.
+  - `geox_compute_ac_risk` — backward-compatible basic tool (exposed as `compute_ac_risk` in MCP namespace).
+  - `geox_evaluate_prospect` — Canonical governance entrypoint with 888_HOLD and VAULT999 sealing.
+  - `geox_load_seismic_line` — Seismic with F4 clarity verification.
+  - `geox_build_structural_candidates` — Multi-model interpretation (non-uniqueness principle).
+  - `geox_verify_geospatial` — Coordinate grounding with CRS validation.
+  - `geox_feasibility_check` — Constitutional firewall (F1-F13 pre-check).
+  - `geox_earth_signals` — Live Earth observations.
+  - `arifos_*` tools — arifOS routing layer (routed, not direct).
 
 ### 2.2 MCP App Stubs + UI Bridge (Options B, C, D)
 **Files:** `geox/apps/*/manifest.json`, `geox/apps/*/index.html`
@@ -152,5 +160,5 @@ Each GEOX app exposes its HTML via an MCP `ui://` resource. This aligns with the
 
 ---
 
-*Updated: 2026-04-13*  
+**Updated: 2026-04-16**
 *Seal: DITEMPA BUKAN DIBERI — 999 SEAL ALIVE*

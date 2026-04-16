@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 GEOX MCP Server Entry Point
-═══════════════════════════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════════════════════════
 
 FastMCP Cloud deployment entrypoint.
 Sets PYTHONPATH correctly for the geox package.
@@ -14,21 +14,27 @@ import sys
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# In Docker: /app/geox_mcp_server.py, geox at /app/geox/, so use SCRIPT_DIR
-# Locally: /root/geox/geox_mcp_server.py, geox at /root/geox/geox/, so use parent
-if os.path.basename(SCRIPT_DIR) == "geox" and os.path.exists(
-    os.path.join(SCRIPT_DIR, "geox_mcp_server.py")
-):
-    # Local dev: geox_mcp_server.py is INSIDE geox/ directory
-    PYTHONPATH = os.path.dirname(SCRIPT_DIR)
-else:
-    # Docker: geox_mcp_server.py is at same level as geox/ directory
+# Detection logic for different deployment layouts:
+# - Local dev: geox_mcp_server.py is INSIDE geox/ directory (geox repo root)
+# - FastMCP Cloud: geox_mcp_server.py is AT SAME LEVEL as geox/ package (/app/)
+# - Local Docker: geox_mcp_server.py is INSIDE geox/ directory (/app/geox/)
+
+GEOX_PKG_PATH = os.path.join(SCRIPT_DIR, "geox")
+if os.path.isdir(GEOX_PKG_PATH):
+    # geox/ package is a sibling of geox_mcp_server.py (FastMCP Cloud layout)
     PYTHONPATH = SCRIPT_DIR
+else:
+    # geox/ package is the PARENT of geox_mcp_server.py (local dev/Docker)
+    GEOPX_ROOT = os.path.dirname(SCRIPT_DIR)
+    if os.path.isdir(os.path.join(GEOPX_ROOT, "geox")):
+        PYTHONPATH = GEOPX_ROOT
+    else:
+        PYTHONPATH = SCRIPT_DIR
 
 os.environ["PYTHONPATH"] = PYTHONPATH
 sys.path.insert(0, PYTHONPATH)
 
-from geox.mcp.fastmcp_server import mcp
+from geox.geox_mcp.fastmcp_server import mcp
 
 if __name__ == "__main__":
     import uvicorn

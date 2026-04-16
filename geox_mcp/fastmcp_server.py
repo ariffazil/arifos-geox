@@ -22,7 +22,7 @@ from typing import Any, Literal
 
 from mcp.server.fastmcp import FastMCP
 
-from geox.core.ac_risk import (
+from ..core.ac_risk import (
     compute_ac_risk as _compute_ac_risk,
     compute_ac_risk_governed as _compute_ac_risk_governed,
     GovernedACRiskResult,

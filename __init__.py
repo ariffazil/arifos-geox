@@ -21,7 +21,7 @@ Constitutional Floors: F1, F2, F4, F7, F9, F11, F13
 __version__ = "v2026.04.10-EIC"
 __seal__ = "DITEMPA BUKAN DIBERI"
 
-from geox.core.ac_risk import (
+from .core.ac_risk import (
     compute_ac_risk,
     compute_ac_risk_governed,
     AC_RiskResult,
@@ -30,7 +30,7 @@ from geox.core.ac_risk import (
     TEARFRAME,
     AntiHantuScreen,
 )
-from geox.core.tool_registry import ToolRegistry, ToolStatus, ErrorCode
+from .core.tool_registry import ToolRegistry, ToolStatus, ErrorCode
 
 __all__ = [
     "__version__",

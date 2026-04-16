@@ -5,4 +5,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app/geox/
 ENV PYTHONPATH=/app
 EXPOSE 8765
-CMD ["python", "-m", "geox.mcp.server"]
+CMD ["python", "-m", "geox.geox_mcp.server"]
