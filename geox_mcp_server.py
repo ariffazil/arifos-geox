@@ -36,6 +36,8 @@ sys.path.insert(0, PYTHONPATH)
 
 from geox.geox_mcp.fastmcp_server import mcp
 
+app = mcp.streamable_http_app()
+
 if __name__ == "__main__":
     import uvicorn
 
@@ -45,7 +47,6 @@ if __name__ == "__main__":
     print(f"Starting GEOX MCP Server on {host}:{port}")
     print(f"PYTHONPATH={os.environ.get('PYTHONPATH')}")
 
-    app = mcp.streamable_http_app()
     uvicorn.run(
         app,
         host=host,
